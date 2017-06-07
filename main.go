@@ -14,7 +14,7 @@ func main() {
 		err := checkHost(i)
 		if err != nil {
 			fmt.Printf("can't check %s: %s\n", i, err)
-			panic(err)
+			exitcode = 1
 		}
 	}
 	os.Exit(exitcode)
