@@ -1,8 +1,7 @@
 Check Expiring Certs
 ====================
 
-This is a simple program to warn if SSL certificate on specified host is to
-expire in a week.
+Warn if SSL certificate on specified host is to expire in a week.
 
 Install
 -------
