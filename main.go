@@ -1,27 +1,72 @@
 package main
 
-import "os"
-import "time"
-import "fmt"
-import "crypto/tls"
+import (
+	"crypto/tls"
+	"flag"
+	"fmt"
+	"net"
+	"os"
+	"sync"
+	"time"
 
-import "github.com/dustin/go-humanize"
-
-var exitcode int
+	"github.com/dustin/go-humanize"
+)
 
 func main() {
-	for _, i := range os.Args[1:] {
-		err := checkHost(i)
-		if err != nil {
-			fmt.Printf("can't check %s: %s\n", i, err)
-			exitcode = 1
-		}
+
+	exitcode := 0
+
+	// get timeout from opts
+	timeout := flag.Duration("timeout", 2*time.Second, "timeout for connection")
+	concurrency := flag.Int("concurrency", 128, "number of concurrent checks")
+	flag.Parse()
+
+	// endpoints to check
+	endpoints := flag.Args()
+
+	// semaphore to limit concurrency to a reasonable number
+	semaphore := make(chan struct{}, *concurrency)
+
+	wg := new(sync.WaitGroup)
+	wg.Add(len(endpoints))
+
+	for _, i := range endpoints {
+
+		// sleep 1ms to avoid hitting DNS resolver limits
+		time.Sleep(time.Millisecond)
+
+		// acquire semaphore
+		semaphore <- struct{}{}
+
+		go func(i string) {
+
+			// mark as done when we're finished
+			defer wg.Done()
+
+			// release semaphore
+			defer func() { <-semaphore }()
+
+			is_expired, err := checkHost(i, *timeout)
+			if err != nil {
+				fmt.Printf("can't check %s: %s\n", i, err)
+				exitcode = 1
+			} else if is_expired {
+				exitcode = 1
+			}
+
+		}(i)
 	}
+
+	wg.Wait()
+
 	os.Exit(exitcode)
 }
 
-func checkHost(host string) (err error) {
-	conn, err := tls.Dial("tcp", host, &tls.Config{
+func checkHost(host string, timeout time.Duration) (is_expired bool, err error) {
+	dialer := &net.Dialer{
+		Timeout: timeout,
+	}
+	conn, err := tls.DialWithDialer(dialer, "tcp", host, &tls.Config{
 		InsecureSkipVerify: true,
 	})
 	if err != nil {
@@ -30,7 +75,7 @@ func checkHost(host string) (err error) {
 	conn.Close()
 	for _, cert := range conn.ConnectionState().PeerCertificates {
 		if time.Now().AddDate(0, 0, 7).After(cert.NotAfter) {
-			exitcode = 1
+			is_expired = true
 			fmt.Printf("Certificate for %s (%s) expires in %s\n",
 				host, cert.Subject.CommonName,
 				humanize.Time(cert.NotAfter))
