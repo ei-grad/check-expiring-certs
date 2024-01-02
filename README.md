@@ -26,6 +26,24 @@ check-expiring-certs [2a02:6b8:a::a]:443
 Exits with return code 1 if any certificates are expiring soon or connections
 failed.
 
+## Address Arguments
+
+The tool accepts hostname:port arguments for specifying hosts to check. As a
+convenience, if only a hostname is provided, port 443 will be used by default.
+
+Address arguments may also be specified in the form `hostname:IPaddress:port`
+to override the hostname used for TLS SNI (Server Name Indication). This allows
+checking certificates on hosts with mismatching hostnames or IPs.
+
+For example:
+
+```
+check-expiring-certs github.com:1.2.3.4:443
+```
+
+This will check the certificate presented by the server at 1.2.3.4:443, but use
+"github.com" as the expected hostname for certificate validation.
+
 ## Installation
 
 ```

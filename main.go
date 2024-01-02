@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"regexp"
+	"strings"
 	"sync"
 	"time"
 
@@ -34,6 +36,8 @@ func main() {
 	wg := new(sync.WaitGroup)
 	wg.Add(len(endpoints))
 
+	warn_if_expired_at := time.Now().AddDate(0, 0, *warning_period)
+
 	for _, i := range endpoints {
 
 		// sleep 1ms to avoid hitting DNS resolver limits
@@ -50,7 +54,7 @@ func main() {
 			// release semaphore
 			defer func() { <-semaphore }()
 
-			is_expired, err := checkHost(dialer, i, *warning_period)
+			is_expired, err := checkHost(dialer, i, warn_if_expired_at)
 			if err != nil {
 				fmt.Printf("can't check %s: %s\n", i, err)
 				exitcode = 1
@@ -66,20 +70,31 @@ func main() {
 	os.Exit(exitcode)
 }
 
+var addrOverride = regexp.MustCompile(`^([^:]+):(((\[[0-9a-f:]+\])|([^:]+)):\d+)$`)
+
 func checkHost(
 	dialer *net.Dialer,
 	host string,
-	warning_period int,
+	warn_if_expired_at time.Time,
 ) (is_expired bool, err error) {
-	conn, err := tls.DialWithDialer(dialer, "tcp", host, &tls.Config{
+	config := tls.Config{
 		InsecureSkipVerify: true,
-	})
+	}
+	if !strings.Contains(host, ":") {
+		host = host + ":443"
+	} else if match := addrOverride.FindStringSubmatch(host); match != nil {
+		fmt.Printf("Match %s: %s\n", host, match)
+		config.ServerName = match[1]
+		host = match[2]
+	}
+
+	conn, err := tls.DialWithDialer(dialer, "tcp", host, &config)
 	if err != nil {
 		return
 	}
 	conn.Close()
 	for _, cert := range conn.ConnectionState().PeerCertificates {
-		if time.Now().AddDate(0, 0, warning_period).After(cert.NotAfter) {
+		if warn_if_expired_at.After(cert.NotAfter) {
 			is_expired = true
 			fmt.Printf("Certificate for %s (%s) expires in %s\n",
 				host, cert.Subject.CommonName,
