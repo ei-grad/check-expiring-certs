@@ -16,7 +16,7 @@ func main() {
 
 	exitcode := 0
 
-	// get timeout from opts
+	warning_period := flag.Int("warn", 7, "warning period in days")
 	timeout := flag.Duration("timeout", 2*time.Second, "timeout for connection")
 	concurrency := flag.Int("concurrency", 128, "number of concurrent checks")
 	flag.Parse()
@@ -26,6 +26,10 @@ func main() {
 
 	// semaphore to limit concurrency to a reasonable number
 	semaphore := make(chan struct{}, *concurrency)
+
+	dialer := &net.Dialer{
+		Timeout: *timeout,
+	}
 
 	wg := new(sync.WaitGroup)
 	wg.Add(len(endpoints))
@@ -46,7 +50,7 @@ func main() {
 			// release semaphore
 			defer func() { <-semaphore }()
 
-			is_expired, err := checkHost(i, *timeout)
+			is_expired, err := checkHost(dialer, i, *warning_period)
 			if err != nil {
 				fmt.Printf("can't check %s: %s\n", i, err)
 				exitcode = 1
@@ -62,10 +66,11 @@ func main() {
 	os.Exit(exitcode)
 }
 
-func checkHost(host string, timeout time.Duration) (is_expired bool, err error) {
-	dialer := &net.Dialer{
-		Timeout: timeout,
-	}
+func checkHost(
+	dialer *net.Dialer,
+	host string,
+	warning_period int,
+) (is_expired bool, err error) {
 	conn, err := tls.DialWithDialer(dialer, "tcp", host, &tls.Config{
 		InsecureSkipVerify: true,
 	})
@@ -74,7 +79,7 @@ func checkHost(host string, timeout time.Duration) (is_expired bool, err error) 
 	}
 	conn.Close()
 	for _, cert := range conn.ConnectionState().PeerCertificates {
-		if time.Now().AddDate(0, 0, 7).After(cert.NotAfter) {
+		if time.Now().AddDate(0, 0, warning_period).After(cert.NotAfter) {
 			is_expired = true
 			fmt.Printf("Certificate for %s (%s) expires in %s\n",
 				host, cert.Subject.CommonName,
