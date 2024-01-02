@@ -20,7 +20,7 @@ func main() {
 
 	warning_period := flag.Int("warn", 7, "warning period in days")
 	timeout := flag.Duration("timeout", 2*time.Second, "timeout for connection")
-	concurrency := flag.Int("concurrency", 128, "number of concurrent checks")
+	concurrency := flag.Int("c", 128, "number of concurrent checks")
 	flag.Parse()
 
 	// endpoints to check

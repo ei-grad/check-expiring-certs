@@ -46,7 +46,7 @@ TLS SNI.
 
 - `-warn N`: Warn if a certificate is expiring within N days (default: 7).
 - `-timeout DURATION`: Set a timeout for each connection (default: 2s).
-- `-concurrency N`: Specify the number of concurrent checks (default: 128).
+- `-c N`: Specify the number of concurrent checks (default: 128).
 
 ### Examples
 
