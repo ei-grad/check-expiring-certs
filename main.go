@@ -83,7 +83,6 @@ func checkHost(
 	if !strings.Contains(host, ":") {
 		host = host + ":443"
 	} else if match := addrOverride.FindStringSubmatch(host); match != nil {
-		fmt.Printf("Match %s: %s\n", host, match)
 		config.ServerName = match[1]
 		host = match[2]
 	}
