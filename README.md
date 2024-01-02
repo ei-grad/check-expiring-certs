@@ -1,3 +1,11 @@
+[![License](https://img.shields.io/github/license/ei-grad/check-expiring-certs)](LICENSE)
+[![Workflow Status](https://github.com/ei-grad/check-expiring-certs/actions/workflows/release.yml/badge.svg)](https://github.com/ei-grad/check-expiring-certs/actions/workflows/release.yml)
+[![Latest Release](https://img.shields.io/github/v/release/ei-grad/check-expiring-certs)](https://github.com/ei-grad/check-expiring-certs/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/ei-grad/check-expiring-certs/total)](https://github.com/ei-grad/check-expiring-certs/graphs/traffic)
+[![Contributors](https://img.shields.io/github/contributors/ei-grad/check-expiring-certs)](https://github.com/ei-grad/check-expiring-certs/graphs/contributors)
+[![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/eigrad)](https://x.com/eigrad)
+
+
 # Check Expiring Certs
 
 Check Expiring Certs is a fast and simple tool designed for efficiently
