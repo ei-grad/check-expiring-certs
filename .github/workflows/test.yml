@@ -1,0 +1,26 @@
+name: test
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '>=1.21.5'
+      - name: Test
+        run: go test -v ./...
+      - name: Update coverage report
+        uses: ncruces/go-coverage-report@v0
+        with:
+          report: true
+          chart: true
+          amend: true
+        continue-on-error: true

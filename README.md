@@ -1,5 +1,6 @@
 [![License](https://img.shields.io/github/license/ei-grad/check-expiring-certs)](LICENSE)
 [![Workflow Status](https://github.com/ei-grad/check-expiring-certs/actions/workflows/release.yml/badge.svg)](https://github.com/ei-grad/check-expiring-certs/actions/workflows/release.yml)
+[![Go Coverage](https://github.com/ei-grad/check-expiring-certs/wiki/coverage.svg)](https://raw.githack.com/wiki/ei-grad/check-expiring-certs/coverage.html)
 [![Go Report](https://goreportcard.com/badge/github.com/ei-grad/check-expiring-certs)](https://goreportcard.com/report/github.com/ei-grad/check-expiring-certs)
 [![Latest Release](https://img.shields.io/github/v/release/ei-grad/check-expiring-certs)](https://github.com/ei-grad/check-expiring-certs/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/ei-grad/check-expiring-certs/total)](https://github.com/ei-grad/check-expiring-certs/graphs/traffic)
