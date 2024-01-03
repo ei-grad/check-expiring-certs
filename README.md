@@ -45,11 +45,12 @@ check-expiring-certs [options] <host:port> [<host:port> ...]
 ```
 
 It exits with return code 1 if any certificates are expiring soon or
-connections failed.
+connections failed, and writes a message like 'Certificate for <host>
+(<common-name>) expires in <time-until-expiration>'. Connection errors are also
+logged to stdout.
 
-The tool accepts `hostname:port` arguments, defaulting to port 443 if omitted,
-and allows `server_name:hostname:port` to specify a different server name for
-TLS SNI.
+The tool accepts `host:port` arguments, defaulting to port 443 if omitted, and
+allows `server_name:host:port` to specify a different server name for TLS SNI.
 
 ### Options
 
