@@ -9,8 +9,8 @@
 # Check Expiring Certs
 
 Check Expiring Certs is a fast and simple tool designed for efficiently
-monitoring HTTPS certificates. It warns if an SSL/TLS certificate on a
-specified hosts is due to expire within a configurable number of days.
+monitoring HTTPS certificates expiration. It warns if an SSL/TLS certificate on
+a specified hosts is due to expire within a configurable number of days.
 
 ## Installation
 
