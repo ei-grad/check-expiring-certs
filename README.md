@@ -7,6 +7,7 @@
 [![Contributors](https://img.shields.io/github/contributors/ei-grad/check-expiring-certs)](https://github.com/ei-grad/check-expiring-certs/graphs/contributors)
 [![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/eigrad)](https://x.com/eigrad)
 
+![DALL-E generated catchy banner](https://repository-images.githubusercontent.com/93572949/06df635f-186e-480a-b2c2-230b2df4df9f)
 
 # Check Expiring Certs
 
