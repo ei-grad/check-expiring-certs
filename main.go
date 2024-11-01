@@ -67,11 +67,11 @@ func RunChecks(
 			// release semaphore
 			defer func() { <-semaphore }()
 
-			is_expired, err := checker.CheckHost(i)
+			expires_soon, err := checker.CheckHost(i)
 			if err != nil {
 				fmt.Printf("can't check %s: %s\n", i, err)
 				exitcode = 1
-			} else if is_expired {
+			} else if expires_soon {
 				exitcode = 1
 			}
 
@@ -101,9 +101,17 @@ func NewSimpleHostChecker(
 	}
 }
 
+func expiresInOrExpired(t time.Time) string {
+	if time.Now().After(t) {
+		return "expired"
+	} else {
+		return "expires in"
+	}
+}
+
 func (c *SimpleHostChecker) CheckHost(
 	host string,
-) (is_expired bool, err error) {
+) (expires_soon bool, err error) {
 
 	config := tls.Config{
 		// we still want to get connection even if the cert is expired, or if
@@ -129,9 +137,10 @@ func (c *SimpleHostChecker) CheckHost(
 	// check all certificates in the chain for expiration
 	for _, cert := range conn.ConnectionState().PeerCertificates {
 		if c.warn_if_expired_at.After(cert.NotAfter) {
-			is_expired = true
-			fmt.Printf("Certificate for %s (%s) expires in %s\n",
+			expires_soon = true
+			fmt.Printf("Certificate for %s (%s) %s %s.\n",
 				host, cert.Subject.CommonName,
+				expiresInOrExpired(cert.NotAfter),
 				humanize.Time(cert.NotAfter))
 		}
 	}
