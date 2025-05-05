@@ -19,6 +19,10 @@ func main() {
 	warning_period := flag.Int("warn", 7, "warning period in days")
 	timeout := flag.Duration("timeout", 2*time.Second, "timeout for connection")
 	concurrency := flag.Int("c", 128, "number of concurrent checks")
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s [options] <host:port>...\n", os.Args[0])
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 
 	// endpoints to check
