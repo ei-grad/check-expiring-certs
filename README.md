@@ -7,7 +7,7 @@
 [![Contributors](https://img.shields.io/github/contributors/ei-grad/check-expiring-certs)](https://github.com/ei-grad/check-expiring-certs/graphs/contributors)
 [![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/eigrad)](https://x.com/eigrad)
 
-![DALL-E generated catchy banner](https://repository-images.githubusercontent.com/93572949/06df635f-186e-480a-b2c2-230b2df4df9f)
+![GPT-4o refined catchy banner](https://repository-images.githubusercontent.com/93572949/43a8be00-1330-410e-91e2-640c898c002b)
 
 # Check Expiring Certs
 
@@ -18,7 +18,7 @@ a specified hosts is due to expire within a configurable number of days.
 ## Installation
 
 1. **Using Go:**
-   - Install Go (version 1.x or later recommended).
+   - Install Go, version 1.21+ required.
    - Run the following command:
      ```
      go install github.com/ei-grad/check-expiring-certs@latest
@@ -43,7 +43,7 @@ a specified hosts is due to expire within a configurable number of days.
 
 Run the command with the following syntax:
 ```
-check-expiring-certs [options] <host:port> [<host:port> ...]
+check-expiring-certs [options] <host:port>...
 ```
 
 It exits with return code 1 if any certificates are expiring soon or
